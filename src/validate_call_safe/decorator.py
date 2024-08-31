@@ -8,6 +8,7 @@ from pydantic import BaseModel, ValidationError, validate_call, Json
 
 T = TypeVar("T", bound=BaseModel)
 R = TypeVar("R")
+X = TypeVar("X", bound=BaseException)
 
 
 class ErrorModel(BaseModel):
@@ -25,6 +26,7 @@ def validate_call_safe(
     *,
     config: ConfigDict | None = None,
     validate_return: bool = False,
+    extra_exceptions: type[X] | tuple[type[X]] = (Exception,),
 ) -> Callable[[Callable[..., R]], Callable[..., Union[R, T]]]: ...
 
 
@@ -42,6 +44,7 @@ def validate_call_safe(
     *,
     config: ConfigDict | None = None,
     validate_return: bool = False,
+    extra_exceptions: tuple[type[BaseException]] = (Exception,),
 ):
     """Decorator for validating function calls and handling errors safely.
 
@@ -55,6 +58,7 @@ def validate_call_safe(
         func: The function to be decorated (optional, can be passed in decorator form).
         config: Configuration for the Pydantic model (optional).
         validate_return: Whether to validate the return value.
+        extra_exceptions: Additional exception types to handle besides ValidationError.
 
     Returns:
         The decorated function that returns either the original return type or the error model.
@@ -104,7 +108,7 @@ def validate_call_safe(
                     error_repr=repr(e),
                     error_tb=format_exc(),
                 )
-            except Exception as e:
+            except extra_exceptions as e:
                 return error_model(
                     error_type=type(e).__name__,
                     error_json="{}",
