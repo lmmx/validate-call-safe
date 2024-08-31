@@ -2,10 +2,10 @@
 # It is not intended for manual editing.
 
 [metadata]
-groups = ["default", "pytest", "test"]
+groups = ["default", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:d8d5c2117ac522d654a57f45ef227cfc6c0c90e95b3d1b705fee600141bed3f7"
+content_hash = "sha256:d2478893b473dd0c8eb0630e22c49527f23da55d226fcb7ca99848e6f7f43055"
 
 [[metadata.targets]]
 requires_python = ">=3.10"
