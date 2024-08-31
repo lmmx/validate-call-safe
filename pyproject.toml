@@ -1,6 +1,6 @@
 [project]
 name = "validate-call-safe"
-version = "0.2.0"
+version = "0.3.0"
 description = "Safe, non-error-raising, alternative to Pydantic validate_call decorator"
 authors = [
     { name = "Louis Maddox", email = "louismmx@gmail.com" },
