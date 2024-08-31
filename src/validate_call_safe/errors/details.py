@@ -2,8 +2,9 @@
 
 https://github.com/pydantic/pydantic-core/blob/d93e6b15419bcefaf0e952591c3d9e1901171181/python/pydantic_core/__init__.py
 """
-from typing import Any
+
 import sys
+from typing import Any
 
 if sys.version_info < (3, 11):
     from typing_extensions import NotRequired

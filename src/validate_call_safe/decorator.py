@@ -1,24 +1,18 @@
 from __future__ import annotations
 
 from functools import wraps
-from typing import TypeVar, Callable, Any, Union, overload
 from traceback import format_exc
+from typing import Any, Callable, TypeVar, Union, overload
 
-from pydantic import BaseModel, ValidationError, validate_call
+from pydantic import BaseModel, ConfigDict, ValidationError, validate_call
 
-from .errors import ErrorDetails
+from .errors import ErrorModel
 
 T = TypeVar("T", bound=BaseModel)
 R = TypeVar("R")
 X = TypeVar("X", bound=BaseException)
 
-
-class ErrorModel(BaseModel):
-    error_type: str
-    error_details: list[ErrorDetails]
-    error_str: str
-    error_repr: str
-    error_tb: str
+__all__ = ("validate_call_safe",)
 
 
 # Decorator with brackets
