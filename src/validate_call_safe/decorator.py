@@ -7,6 +7,7 @@ from pydantic import BaseModel, ValidationError, validate_call, Json
 T = TypeVar("T", bound=BaseModel)
 R = TypeVar("R")
 
+
 class ErrorModel(BaseModel):
     error_type: str
     error_json: Json
@@ -71,7 +72,7 @@ def validate_call_safe(
         ```
     """
     empty_brackets = error_model_or_func is ErrorModel
-    pos_arg_is_cls = isinstance(error_model_or_func, type) 
+    pos_arg_is_cls = isinstance(error_model_or_func, type)
     provided_err_model = pos_arg_is_cls and issubclass(error_model_or_func, BaseModel)
     if empty_brackets or provided_err_model:
         # Either validate_call used with empty brackets, and the first positional arg
@@ -84,7 +85,9 @@ def validate_call_safe(
         error_model = ErrorModel
 
     def validate(f: Callable[..., R]) -> Callable[..., Union[R, T]]:
-        validated_func = validate_call(f, config=config, validate_return=validate_return)
+        validated_func = validate_call(
+            f, config=config, validate_return=validate_return
+        )
 
         @wraps(f)
         def wrapper(*args: Any, **kwargs: Any) -> Union[R, T]:
