@@ -46,6 +46,7 @@ def validate_call_safe(
     *,
     config: ConfigDict | None = None,
     validate_return: bool = False,
+    capture_signature_only: bool = False,
     extra_exceptions: tuple[type[BaseException]] = (Exception,),
 ):
     """Decorator for validating function calls and handling errors safely.
@@ -103,21 +104,28 @@ def validate_call_safe(
             try:
                 return validated_func(*args, **kwargs)
             except ValidationError as e:
-                return error_model(
-                    error_type="ValidationError",
-                    error_details=e.errors(),
-                    error_str=str(e),
-                    error_repr=repr(e),
-                    error_tb=format_exc(),
-                )
+                is_signature_ve = validated_func.__name__ == e.title
+                if capture_signature_only and not is_signature_ve:
+                    raise
+                else:
+                    return error_model(
+                        error_type="ValidationError",
+                        error_details=e.errors(),
+                        error_str=str(e),
+                        error_repr=repr(e),
+                        error_tb=format_exc(),
+                    )
             except extra_exceptions as e:
-                return error_model(
-                    error_type=type(e).__name__,
-                    error_details=[],
-                    error_str=str(e),
-                    error_repr=repr(e),
-                    error_tb=format_exc(),
-                )
+                if capture_signature_only:
+                    raise
+                else:
+                    return error_model(
+                        error_type=type(e).__name__,
+                        error_details=[],
+                        error_str=str(e),
+                        error_repr=repr(e),
+                        error_tb=format_exc(),
+                    )
 
         return wrapper
 
