@@ -46,7 +46,7 @@ def validate_call_safe(
     *,
     config: ConfigDict | None = None,
     validate_return: bool = False,
-    capture_signature_only: bool = False,
+    validate_body: bool = True,
     extra_exceptions: tuple[type[BaseException]] = (Exception,),
 ):
     """Decorator for validating function calls and handling errors safely.
@@ -61,6 +61,7 @@ def validate_call_safe(
         func: The function to be decorated (optional, can be passed in decorator form).
         config: Configuration for the Pydantic model (optional).
         validate_return: Whether to validate the return value.
+        validate_body: Whether to handle exceptions besides signature validation.
         extra_exceptions: Additional exception types to handle besides ValidationError.
 
     Returns:
@@ -101,11 +102,13 @@ def validate_call_safe(
 
         @wraps(f)
         def wrapper(*args: Any, **kwargs: Any) -> Union[R, T]:
+            _signature_only = not validate_body  # Alias for internal clarity (lol)
             try:
                 return validated_func(*args, **kwargs)
             except ValidationError as e:
+                # Good enough heuristic to tell if the error came from the func schema
                 is_signature_ve = validated_func.__name__ == e.title
-                if capture_signature_only and not is_signature_ve:
+                if _signature_only and not is_signature_ve:
                     raise
                 else:
                     return error_model(
@@ -116,7 +119,7 @@ def validate_call_safe(
                         error_tb=format_exc(),
                     )
             except extra_exceptions as e:
-                if capture_signature_only:
+                if _signature_only:
                     raise
                 else:
                     return error_model(
