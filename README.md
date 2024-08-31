@@ -1,6 +1,6 @@
 # validate-call-safe
 
-`validate_call_safe` is a Python package that provides a safe, non-error-raising alternative to Pydantic's `validate_call` decorator.
+`validate_call_safe` is a safe, non-error-raising alternative to Pydantic's `validate_call` decorator.
 It allows you to validate function arguments while gracefully handling validation errors through an error model,
 inspired by effects handlers, returning them as structured data models instead of raising exceptions.
 
