@@ -2,7 +2,7 @@ from pydantic import BaseModel, Json
 from validate_call_safe import validate_call_safe, ErrorModel
 
 
-@validate_call_safe(extra_exceptions=NameError)
+@validate_call_safe(extra_exceptions=NameError, validate_body=True)
 def int_noop(a: int) -> int:
     if a == 1:
         raise ValueError("Thrown")

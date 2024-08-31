@@ -28,7 +28,8 @@ def validate_call_safe(
     *,
     config: ConfigDict | None = None,
     validate_return: bool = False,
-    extra_exceptions: type[X] | tuple[type[X]] = (Exception,),
+    validate_body: bool = False,
+    extra_exceptions: type[X] | tuple[type[X]] = (ValidationError,),
 ) -> Callable[[Callable[..., R]], Callable[..., Union[R, T]]]: ...
 
 
@@ -46,8 +47,8 @@ def validate_call_safe(
     *,
     config: ConfigDict | None = None,
     validate_return: bool = False,
-    validate_body: bool = True,
-    extra_exceptions: tuple[type[BaseException]] = (Exception,),
+    validate_body: bool = False,
+    extra_exceptions: type[X] | tuple[type[X]] = (ValidationError,),
 ):
     """Decorator for validating function calls and handling errors safely.
 
@@ -62,7 +63,8 @@ def validate_call_safe(
         config: Configuration for the Pydantic model (optional).
         validate_return: Whether to validate the return value.
         validate_body: Whether to handle exceptions besides signature validation.
-        extra_exceptions: Additional exception types to handle besides ValidationError.
+        extra_exceptions: Additional exception types to handle besides ValidationError
+                          (requires `validate_body = True`).
 
     Returns:
         The decorated function that returns either the original return type or the error model.
