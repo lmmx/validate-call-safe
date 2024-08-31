@@ -70,15 +70,14 @@ def validate_call_safe(
         result = int_func("not an int")  # Returns CustomErrorModel instance
         ```
     """
-    if error_model_or_func is ErrorModel:
-        # validate_call is used with empty brackets, and defaults to the ErrorModel
+    empty_brackets = error_model_or_func is ErrorModel
+    pos_arg_is_cls = isinstance(error_model_or_func, type) 
+    provided_err_model = pos_arg_is_cls and issubclass(error_model_or_func, BaseModel)
+    if empty_brackets or provided_err_model:
+        # Either validate_call used with empty brackets, and the first positional arg
+        # defaulted to the ErrorModel or used with brackets and an error_model was set
         error_model = error_model_or_func
         func = None
-    elif isinstance(error_model_or_func, type) and issubclass(error_model_or_func, BaseModel):
-        # validate_call is used with brackets, and a positional error_model was set
-        error_model = error_model_or_func
-        func = None
-        # TODO: of this logic is sound, this can be merged with previous condition
     else:
         # validate_call is used without brackets, and defaults to the ErrorModel
         func = error_model_or_func
