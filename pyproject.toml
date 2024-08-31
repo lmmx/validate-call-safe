@@ -16,6 +16,12 @@ license = {text = "MIT"}
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
+[project.license]
+text = "MIT"
+
+[project.urls]
+Homepage = "https://github.com/lmmx/validate-call-safe"
+Repository = "https://github.com/lmmx/validate-call-safe.git"
 
 [tool.pdm]
 distribution = true
