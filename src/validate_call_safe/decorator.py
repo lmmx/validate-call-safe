@@ -29,7 +29,7 @@ def validate_call_safe(
     config: ConfigDict | None = None,
     validate_return: bool = False,
     validate_body: bool = False,
-    extra_exceptions: type[X] | tuple[type[X]] = (ValidationError,),
+    extra_exceptions: type[X] | tuple[type[X]] = ValidationError,
 ) -> Callable[[Callable[..., R]], Callable[..., Union[R, T]]]: ...
 
 
@@ -48,7 +48,7 @@ def validate_call_safe(
     config: ConfigDict | None = None,
     validate_return: bool = False,
     validate_body: bool = False,
-    extra_exceptions: type[X] | tuple[type[X]] = (ValidationError,),
+    extra_exceptions: type[X] | tuple[type[X]] = ValidationError,
 ):
     """Decorator for validating function calls and handling errors safely.
 
