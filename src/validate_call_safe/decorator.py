@@ -4,7 +4,9 @@ from functools import wraps
 from typing import TypeVar, Callable, Any, Union, overload
 from traceback import format_exc
 
-from pydantic import BaseModel, ValidationError, validate_call, Json
+from pydantic import BaseModel, ValidationError, validate_call
+
+from .errors import ErrorDetails
 
 T = TypeVar("T", bound=BaseModel)
 R = TypeVar("R")
@@ -13,7 +15,7 @@ X = TypeVar("X", bound=BaseException)
 
 class ErrorModel(BaseModel):
     error_type: str
-    error_json: Json
+    error_details: list[ErrorDetails]
     error_str: str
     error_repr: str
     error_tb: str
@@ -103,7 +105,7 @@ def validate_call_safe(
             except ValidationError as e:
                 return error_model(
                     error_type="ValidationError",
-                    error_json=e.json(),
+                    error_details=e.errors(),
                     error_str=str(e),
                     error_repr=repr(e),
                     error_tb=format_exc(),
@@ -111,7 +113,7 @@ def validate_call_safe(
             except extra_exceptions as e:
                 return error_model(
                     error_type=type(e).__name__,
-                    error_json="{}",
+                    error_details=[],
                     error_str=str(e),
                     error_repr=repr(e),
                     error_tb=format_exc(),

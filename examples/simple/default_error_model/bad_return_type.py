@@ -11,9 +11,9 @@ bad_return = int_noop(a=1)  # ErrorModel(error_type='ValidationError', ...)
 bad_input = int_noop(a="A")  # ErrorModel(error_type='ValidationError', ...)
 
 assert isinstance(bad_return, ErrorModel)
-assert bad_return.error_json[0]["input"] == 'foo'
-assert bad_return.error_json[0]["loc"] == []
+assert bad_return.error_details[0]["input"] == 'foo'
+assert bad_return.error_details[0]["loc"] == tuple()
 
 assert isinstance(bad_input, ErrorModel)
-assert bad_input.error_json[0]["input"] == 'A'
-assert bad_input.error_json[0]["loc"] == ['a']
+assert bad_input.error_details[0]["input"] == 'A'
+assert bad_input.error_details[0]["loc"] == ('a',)

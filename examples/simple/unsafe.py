@@ -3,7 +3,7 @@ from pydantic import BaseModel, validate_call
 
 class CustomErrorModel(BaseModel):
     error_type: str
-    error_json: str | None = None
+    error_details: list | None = None
     error_str: str | None = None
 
 
