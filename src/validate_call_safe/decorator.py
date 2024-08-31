@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from functools import wraps
 from typing import TypeVar, Callable, Any, Union, overload
+from traceback import format_exc
+
 from pydantic import BaseModel, ValidationError, validate_call, Json
 
 T = TypeVar("T", bound=BaseModel)
@@ -13,6 +15,7 @@ class ErrorModel(BaseModel):
     error_json: Json
     error_str: str
     error_repr: str
+    error_tb: str
 
 
 # Decorator with brackets
@@ -99,6 +102,7 @@ def validate_call_safe(
                     error_json=e.json(),
                     error_str=str(e),
                     error_repr=repr(e),
+                    error_tb=format_exc(),
                 )
             except Exception as e:
                 return error_model(
@@ -106,6 +110,7 @@ def validate_call_safe(
                     error_json="{}",
                     error_str=str(e),
                     error_repr=repr(e),
+                    error_tb=format_exc(),
                 )
 
         return wrapper
