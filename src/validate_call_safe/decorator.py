@@ -74,7 +74,7 @@ def validate_call_safe(
         # validate_call is used with empty brackets, and defaults to the ErrorModel
         error_model = error_model_or_func
         func = None
-    elif issubclass(error_model_or_func, BaseModel):
+    elif isinstance(error_model_or_func, type) and issubclass(error_model_or_func, BaseModel):
         # validate_call is used with brackets, and a positional error_model was set
         error_model = error_model_or_func
         func = None
@@ -85,7 +85,7 @@ def validate_call_safe(
         error_model = ErrorModel
 
     def validate(f: Callable[..., R]) -> Callable[..., Union[R, T]]:
-        validated_func = validate_call(f, config=config)
+        validated_func = validate_call(f, config=config, validate_return=validate_return)
 
         @wraps(f)
         def wrapper(*args: Any, **kwargs: Any) -> Union[R, T]:

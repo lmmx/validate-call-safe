@@ -5,8 +5,6 @@ from validate_call_safe import validate_call_safe
 class CustomErrorModel(BaseModel):
     error_type: str
     error_json: Json
-    error_str: str
-    error_repr: str
 
 
 @validate_call_safe(CustomErrorModel)
