@@ -28,24 +28,81 @@ pip install validate-call-safe
 
 ### Basic Usage
 
-Here's a basic example using a custom error model:
+The simplest possible usage is as a direct alternative to `@validate_call`:
+
+```py
+from validate_call_safe import validate_call_safe
+
+def foo(a: int) -> None:
+    return a
+
+value = foo(a="bar")  # ErrorModel(error_type='ValidationError', ...)
+```
+
+Instead of raising the `ValidationError`, it's captured in a Pydantic model,
+specifically an instance of [`ErrorModel`][EM]. Its fields are:
+
+- `error_type`
+- `error_details`
+- `error_str`
+- `error_repr`
+- `error_tb`
+
+[EM]: https://github.com/lmmx/validate-call-safe/blob/master/src/validate_call_safe/errors/model.py
+
+### Decorator Forms
+
+`validate_call_safe` offers flexibility in specifying the error model:
+
+1. No brackets:
+   ```python
+   @validate_call_safe
+   def int_noop(a: int) -> int:
+       return a
+   ```
+
+2. Empty brackets:
+   ```python
+   @validate_call_safe()
+   def int_noop(a: int) -> int:
+       return a
+   ```
+
+3. Custom error model:
+   ```python
+   @validate_call_safe(CustomErrorModel)
+   def int_noop(a: int) -> int:
+       return a
+   ```
+
+4. With validation parameters:
+   ```python
+   @validate_call_safe(validate_return=True)
+   def int_noop(a: int) -> int:
+       return a
+   ```
+
+### Custom Error Models
+
+To get more concise error model objects, you might want to override the default `ErrorModel` class
+with your own, and just include the fields you want.
+
+For example:
 
 ```python
 from pydantic import BaseModel
 from validate_call_safe import validate_call_safe, ErrorDetails
 
-class CustomErrorModel(BaseModel):
+class MyErrorModel(BaseModel):
     error_type: str
     error_details: list[ErrorDetails]
-    error_repr: str
-    error_tb: str
 
-@validate_call_safe(CustomErrorModel)
+@validate_call_safe(MyErrorModel)
 def int_noop(a: int) -> int:
     return a
 
 success = int_noop(a=1)  # 1
-failure = int_noop(a="A")  # CustomErrorModel(error_type='ValidationError', ...)
+failure = int_noop(a="A")  # MyErrorModel(error_type='ValidationError', ...)
 ```
 
 ### Return Value Validation
@@ -97,44 +154,11 @@ but will not stop `sys.exit` calls for which you'd need to capture `BaseExceptio
 Specifying it is useful to narrow the handled exception types, as is good practice
 with regular `try`/`except` exception handling.
 
-### Error Model Configuration
-
-`validate_call_safe` offers flexibility in specifying the error model:
-
-1. No brackets:
-   ```python
-   @validate_call_safe
-   def int_noop(a: int) -> int:
-       return a
-   ```
-
-2. Empty brackets:
-   ```python
-   @validate_call_safe()
-   def int_noop(a: int) -> int:
-       return a
-   ```
-
-3. Custom error model:
-   ```python
-   @validate_call_safe(CustomErrorModel)
-   def int_noop(a: int) -> int:
-       return a
-   ```
-
-4. With validation parameters:
-   ```python
-   @validate_call_safe(validate_return=True)
-   def int_noop(a: int) -> int:
-       return a
-   ```
-
 ## Comparison with `validate_call`
 
 With `validate_call_safe` you don't have to catch the expected `ValidationError` from Pydantic's `validate_call`:
 
 ```python
-# Using validate_call
 from pydantic import validate_call
 
 @validate_call
@@ -145,18 +169,32 @@ try:
     unsafe_int_noop(a="A")
 except ValidationError as e:
     print(f"Error: {e}")
+else:
+    ...  # Regular business logic here
+```
 
-# Using validate_call_safe
-from validate_call_safe import validate_call_safe
+Using `validate_call_safe`:
 
-@validate_call_safe(CustomErrorModel)
+```py
+from validate_call_safe import validate_call_safe, ErrorModel
+
+@validate_call_safe:
 def safe_int_noop(a: int) -> int:
     return a
 
 result = safe_int_noop(a="A")
 match result:
-    case CustomErrorModel():
-        print(f"Error: {result.error_type}")
+    case ErrorModel():
+        print(f"Error: {result.error_repr}")
     case int():
         ...  # Regular business logic here
 ```
+
+- These both do the same thing and have the same number of lines
+- In the safe form, you get structured error objects to work with (including tracebacks)
+- You can trivially extend the safety level to more exception types with `validate_body`
+- The side effects of the safe form may be easier to reason about for you (I think they are)
+
+## Extensions/ideas
+
+- Multiple model types for different error types with tagged union on the `error_type` field name?
