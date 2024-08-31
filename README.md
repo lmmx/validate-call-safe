@@ -85,3 +85,4 @@ match result:
 - Complete with reference to [original](https://github.com/pydantic/pydantic/blob/8dc0ce3c626d49d94ce688ffc450abf2b491aff3/pydantic/_internal/_validate_call.py) (and maybe just rely on original, seems the more reliably correct way?)
 - Restrict to ValidationError
 - Specify non-ValidationError exceptions to capture
+- Capture tracebacks
