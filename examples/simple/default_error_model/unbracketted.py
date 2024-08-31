@@ -1,4 +1,3 @@
-from pydantic import BaseModel, Json
 from validate_call_safe import validate_call_safe, ErrorModel
 
 

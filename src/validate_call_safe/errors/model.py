@@ -2,6 +2,8 @@ from pydantic import BaseModel
 
 from .details import ErrorDetails
 
+__all__ = ("ErrorModel",)
+
 
 class ErrorModel(BaseModel):
     error_type: str

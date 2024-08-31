@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from functools import wraps
 from traceback import format_exc
-from typing import Any, Callable, TypeVar, Union, overload
+from typing import Any, TypeVar, overload
+from collections.abc import Callable
 
 from pydantic import BaseModel, ConfigDict, ValidationError, validate_call
 
@@ -24,7 +25,7 @@ def validate_call_safe(
     validate_return: bool = False,
     validate_body: bool = False,
     extra_exceptions: type[X] | tuple[type[X]] = Exception,
-) -> Callable[[Callable[..., R]], Callable[..., Union[R, T]]]: ...
+) -> Callable[[Callable[..., R]], Callable[..., R | T]]: ...
 
 
 # Decorator without brackets
@@ -32,7 +33,7 @@ def validate_call_safe(
 def validate_call_safe(
     func: Callable[..., R],
     /,
-) -> Callable[..., Union[R, T]]: ...
+) -> Callable[..., R | T]: ...
 
 
 def validate_call_safe(
@@ -91,13 +92,15 @@ def validate_call_safe(
         func = error_model_or_func
         error_model = ErrorModel
 
-    def validate(f: Callable[..., R]) -> Callable[..., Union[R, T]]:
+    def validate(f: Callable[..., R]) -> Callable[..., R | T]:
         validated_func = validate_call(
-            f, config=config, validate_return=validate_return
+            f,
+            config=config,
+            validate_return=validate_return,
         )
 
         @wraps(f)
-        def wrapper(*args: Any, **kwargs: Any) -> Union[R, T]:
+        def wrapper(*args: Any, **kwargs: Any) -> R | T:
             _signature_only = not validate_body  # Alias for internal clarity (lol)
             try:
                 return validated_func(*args, **kwargs)
