@@ -17,17 +17,17 @@ class ValidateCallSafeWrapper:
         function: Callable[..., Any],
         error_model: type[ErrorModel],
         config: ConfigDict | None,
-        include_json: bool,
-        include_str: bool,
+        # Initialise more flags here
+        # include_foo: bool,
     ):
         self.function = function
         self.error_model = error_model
-        self.include_json = include_json
-        self.include_str = include_str
+        # Set more flags here
+        # self.include_foo = include_foo
 
         config_wrapper = ConfigWrapper(config)
         gen_schema = _generate_schema.GenerateSchema(config_wrapper, _typing_extra.get_cls_types_namespace(function))
-        schema = gen_schema.generate_schema(function)
+        # schema = gen_schema.generate_schema(function)
         core_config = config_wrapper.core_config(function)
 
         self.validator = _validate_call.ValidateCallWrapper(
@@ -44,22 +44,22 @@ class ValidateCallSafeWrapper:
             return self.validator(*args, **kwargs)
         except Exception as e:
             error_data = {"error_type": type(e).__name__}
-            if self.include_json:
-                if isinstance(e, ValidationError):
-                    error_data["error_json"] = e.json()
-                else:
-                    error_data["error_json"] = "{}"
-            if self.include_str:
-                error_data["error_str"] = str(e)
-                error_data["error_repr"] = repr(e)
+            if isinstance(e, ValidationError):
+                error_data["error_json"] = e.json()
+            else:
+                error_data["error_json"] = "{}"
+            error_data["error_str"] = str(e)
+            error_data["error_repr"] = repr(e)
+            # if self.include_foo:
+            #     ...
             return self.error_model.model_validate(error_data)
 
 def validate_call_safe(
     error_model: type[ErrorModel],
     *,
     config: ConfigDict | None = None,
-    include_json: bool = True,
-    include_str: bool = True,
+    # Add more flags here
+    # include_foo: bool = True,
 ) -> Callable[[Callable[..., T]], Callable[..., Union[T, ErrorModel]]]:
     def decorator(function: Callable[..., T]) -> Callable[..., Union[T, ErrorModel]]:
         return functools.wraps(function)(
@@ -67,8 +67,8 @@ def validate_call_safe(
                 function,
                 error_model,
                 config,
-                include_json,
-                include_str,
+                # Pass added flags here
+                # include_foo,
             )
         )
     return decorator

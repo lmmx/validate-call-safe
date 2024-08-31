@@ -4,8 +4,9 @@
 It allows you to validate function arguments while gracefully handling validation errors through an error model,
 inspired by effects handlers, returning them as structured data models instead of raising exceptions.
 
-This therefore means that side effects ('erroring') are transformed into return types. This is
-reflected in the type annotation of the decorator.
+This therefore means that side effects ('erroring') are transformed into return types.
+The return type annotation of a decorated function is modified accordingly as the `Union` of the
+existing return type with the provided error model type.
 
 ## Features
 
@@ -33,22 +34,19 @@ from validate_call_safe import validate_call_safe
 
 class CustomErrorModel(BaseModel):
     error_type: str
-    error_json: Json | None = {}
-    error_repr: str
-    error_str: str
+    error_json: Json = {}
+    error_str: str | None = None
+    error_repr: str | None = None
 
 @validate_call_safe(CustomErrorModel)
 def int_noop(a: int) -> int:
     return a
 
-# Successful call
-result = int_noop(a=1)
-print(result)  # Output: 1
-
-# Failed call
-result = int_noop(a="A")
-print(result)  # Output: CustomErrorModel instance
+success = int_noop(a=1)  # 1
+failure = int_noop(a="A")  # Instance of CustomErrorModel
 ```
+
+See the examples directory for a standalone program.
 
 ## Comparison with `validate_call`
 
@@ -81,5 +79,6 @@ if isinstance(result, CustomErrorModel):
 
 ## Ideas
 
+- Complete with reference to [original](https://github.com/pydantic/pydantic/blob/8dc0ce3c626d49d94ce688ffc450abf2b491aff3/pydantic/_internal/_validate_call.py) (and maybe just rely on original, seems the more reliably correct way?)
 - Restrict to ValidationError
 - Specify non-ValidationError exceptions to capture
