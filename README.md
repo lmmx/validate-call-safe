@@ -13,7 +13,8 @@ existing return type with the provided error model type.
 - Validates function arguments using Pydantic's existing `validate_call` decorator
 - Returns a custom error model instead of raising exceptions when validation fails
 - Configurable error information, including JSON representation and string representation of errors
-- Written for Pydantic v2 (more specifically at version 2.8.2)
+- Compatible with Pydantic v2, tested back to version 2.0.1
+- Optional model config and return value validation, as in the original Pydantic `@validate_call` decorator
 
 ## Installation
 
@@ -25,8 +26,7 @@ pip install validate-call-safe
 
 ### Basic Usage
 
-Here we use an example model with **all** error fields: you may only want one of `error_json`,
-`error_str` and `error_repr`.
+Here's a basic example using a custom error model:
 
 ```python
 from pydantic import BaseModel, Json
@@ -46,7 +46,49 @@ success = int_noop(a=1)  # 1
 failure = int_noop(a="A")  # CustomErrorModel(error_type='ValidationError', ...)
 ```
 
-See the examples directory for a standalone program.
+### Return Value Validation
+
+You can enable return value validation using the `validate_return` parameter:
+
+```python
+@validate_call_safe(validate_return=True)
+def int_noop(a: int) -> int:
+    return "foo"  # This will cause a validation error
+
+result = int_noop(a=1)  # ErrorModel(error_type='ValidationError', ...)
+```
+
+### Error Model Configuration
+
+`validate_call_safe` offers flexibility in specifying the error model:
+
+1. No brackets:
+   ```python
+   @validate_call_safe
+   def int_noop(a: int) -> int:
+       return a
+   ```
+
+2. Empty brackets:
+   ```python
+   @validate_call_safe()
+   def int_noop(a: int) -> int:
+       return a
+   ```
+
+3. Custom error model:
+   ```python
+   @validate_call_safe(CustomErrorModel)
+   def int_noop(a: int) -> int:
+       return a
+   ```
+
+4. With validation parameters:
+   ```python
+   @validate_call_safe(validate_return=True)
+   def int_noop(a: int) -> int:
+       return a
+   ```
 
 ## Comparison with `validate_call`
 
@@ -80,9 +122,8 @@ match result:
         ...  # Regular business logic here
 ```
 
-## Ideas
+## Ideas for Future Development
 
-- Complete with reference to [original](https://github.com/pydantic/pydantic/blob/8dc0ce3c626d49d94ce688ffc450abf2b491aff3/pydantic/_internal/_validate_call.py) (and maybe just rely on original, seems the more reliably correct way?)
-- Restrict to ValidationError
+- Optionally restrict to ValidationError
 - Specify non-ValidationError exceptions to capture
 - Capture tracebacks
