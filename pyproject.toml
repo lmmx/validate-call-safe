@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "pdm-backend",
+  "pdm-backend"
 ]
 build-backend = "pdm.backend"
 
@@ -9,11 +9,11 @@ name = "validate-call-safe"
 version = "0.3.2"
 description = "Safe, non-error-raising, alternative to Pydantic validate_call decorator"
 authors = [
-    { name = "Louis Maddox", email = "louismmx@gmail.com" },
+  {name = "Louis Maddox", email = "louismmx@gmail.com"}
 ]
 dependencies = [
-    "pydantic>=2.0.1",
-    "typing-extensions>=4.12.2",
+  "pydantic>=2.0.1",
+  "typing-extensions>=4.12.2"
 ]
 requires-python = ">=3.10"
 readme = "README.md"
@@ -30,5 +30,5 @@ distribution = true
 
 [tool.pdm.dev-dependencies]
 test = [
-    "pytest>=8.3.2",
+  "pytest>=8.3.2"
 ]
