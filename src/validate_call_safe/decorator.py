@@ -5,7 +5,7 @@ from traceback import format_exc
 from typing import Annotated, Any, TypeVar, overload, get_origin, get_args
 from collections.abc import Callable
 
-from pydantic import BaseModel, ConfigDict, ValidationError, validate_call
+from pydantic import BaseModel, ConfigDict, TypeAdapter, ValidationError, validate_call
 
 from .errors import ErrorModel
 
