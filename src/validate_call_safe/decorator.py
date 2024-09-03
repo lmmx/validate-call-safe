@@ -104,6 +104,18 @@ def validate_call_safe(
         func = error_model_or_func
         error_model = ErrorModel
 
+    # TODO: cache these TypeAdapters at module level to avoid recomputation latency
+    # (would affect programs with multiple decorated classes with custom error models?)
+    if is_wrapped_model_cls:
+        # TypeAdapter triggers functional validators in Annotated metadata if present.
+        # Pre-provision it here (upon # decorator creation, if I understand correctly?)
+        # rather than delaying TypeAdapter creation until the wrapper function is run.
+        error_model_validate = TypeAdapter(error_model).validate_python
+    else:
+        # There is no `Annotated` metadata (so no potential functional validators),
+        # so no need to use `TypeAdapter` just a regular `.model_validate()` method
+        error_model_validate = error_model.model_validate
+
     def validate(f: Callable[..., R]) -> Callable[..., R | T]:
         validated_func = validate_call(
             f,
@@ -113,33 +125,39 @@ def validate_call_safe(
 
         @wraps(f)
         def wrapper(*args: Any, **kwargs: Any) -> R | T:
-            _signature_only = not validate_body  # Alias for internal clarity (lol)
+            _signature_only = not validate_body  # Alias for internal clarity
             try:
-                return validated_func(*args, **kwargs)
+                ret = validated_func(*args, **kwargs)
             except ValidationError as e:
                 # Good enough heuristic to tell if the error came from the func schema
                 is_signature_ve = validated_func.__name__ == e.title
                 if _signature_only and not is_signature_ve:
                     raise
                 else:
-                    return error_model(
-                        error_type="ValidationError",
-                        error_details=e.errors(),
-                        error_str=str(e),
-                        error_repr=repr(e),
-                        error_tb=format_exc(),
+                    ret = error_model_validate(
+                        dict(
+                            error_type="ValidationError",
+                            error_details=e.errors(),
+                            error_str=str(e),
+                            error_repr=repr(e),
+                            error_tb=format_exc(),
+                        )
                     )
             except extra_exceptions as e:
                 if _signature_only:
                     raise
                 else:
-                    return error_model(
-                        error_type=type(e).__name__,
-                        error_details=[],
-                        error_str=str(e),
-                        error_repr=repr(e),
-                        error_tb=format_exc(),
+                    ret = error_model_validate(
+                        dict(
+                            error_type=type(e).__name__,
+                            error_details=[],
+                            error_str=str(e),
+                            error_repr=repr(e),
+                            error_tb=format_exc(),
+                        )
                     )
+            finally:
+                return ret
 
         return wrapper
 
