@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import wraps
 from traceback import format_exc
-from typing import Any, TypeVar, overload
+from typing import Annotated, Any, TypeVar, overload, get_origin, get_args
 from collections.abc import Callable
 
 from pydantic import BaseModel, ConfigDict, ValidationError, validate_call
@@ -79,9 +79,21 @@ def validate_call_safe(
         result = int_func("not an int")  # Returns CustomErrorModel instance
         ```
     """
+
+    def is_annotated_basemodel_subclass(cls):
+        if get_origin(cls) is Annotated:
+            base_cls = get_args(cls)[0]
+            return isinstance(base_cls, type) and issubclass(base_cls, BaseModel)
+        return False
+
     empty_brackets = error_model_or_func is ErrorModel
-    pos_arg_is_cls = isinstance(error_model_or_func, type)
-    provided_err_model = pos_arg_is_cls and issubclass(error_model_or_func, BaseModel)
+    is_wrapped_model_cls = is_annotated_basemodel_subclass(error_model_or_func)
+    pos_arg_is_cls = isinstance(error_model_or_func, type) or is_wrapped_model_cls
+
+    # Annotated classes behave as the class (`__call__` method falls thru to model cls)
+    provided_err_model = pos_arg_is_cls and (
+        is_wrapped_model_cls or issubclass(error_model_or_func, BaseModel)
+    )
     if empty_brackets or provided_err_model:
         # Either validate_call used with empty brackets, and the first positional arg
         # defaulted to the ErrorModel or used with brackets and an error_model was set
