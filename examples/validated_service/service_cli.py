@@ -1,3 +1,4 @@
+"""This CLI demo got a bit overinvolved, see the `simple_service.py` demo instead."""
 import argparse
 import json
 from ast import literal_eval
@@ -28,16 +29,10 @@ class Person(BaseModel):
 class Event(BaseModel):
     user: Person
 
-class StrError(ErrorModel):
-    @model_validator(mode="after")
-    @classmethod
-    def stringify(cls, value):
-        return str(value)
-
-# StrError = Annotated[ErrorModel, AfterValidator(str)]
+JsonError = Annotated[ErrorModel, AfterValidator(ErrorModel.model_dump_json)]
 StrReturn = Annotated[int, AfterValidator(str)]
 
-@validate_call_safe(StrError, validate_body=True, validate_return=True)
+@validate_call_safe(JsonError, validate_body=True, validate_return=True)
 def service(event: Event, context: None = None) -> StrReturn:
     """The service behaviour has three main paths:
 
@@ -67,17 +62,17 @@ def main():
     var_p = vars(args)["params"]
     params = args.params
     ev = {k: v if v is None else literal_eval(v) for k,v in vars(args).items()}
-    breakpoint()
     result = service(event=ev)
-    try:
-        print(result.error_str)
-    except:
-        pprint(result)
+    print(result)
     return result
 
 if __name__ == "__main__":
     """Usage:
 
-    python service.py 'user={"age":1, "name":"A", "pets": [{"species":"cat", "name": "foo", "age": 100}]}'
+    Good result:
+    python service_cli.py 'user={"age":1, "name":"A", "pets": [{"species":"cat", "name": "foo", "age": 100}]}'
+
+    Error result:
+    python service_cli.py 'user={"age":1, "name":"A", "pets": []}'
     """
     result = main()
