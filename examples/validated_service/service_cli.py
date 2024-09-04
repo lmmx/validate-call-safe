@@ -61,8 +61,6 @@ def main():
     # Use nargs='+' to capture multiple key=value pairs
     parser.add_argument("params", nargs="+", action=KVAction, help="key=value pairs")
     args = parser.parse_args()
-    var_p = vars(args)["params"]
-    params = args.params
     ev = {k: v if v is None else literal_eval(v) for k, v in vars(args).items()}
     result = service(event=ev)
     print(result)
