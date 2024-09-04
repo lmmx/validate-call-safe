@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pprint import pprint
 from typing import Annotated
 
 from pydantic import AfterValidator, BaseModel
@@ -24,17 +23,21 @@ class Pet(BaseModel):
     age: int
     "Age of animal in years."
 
+
 # An alternative to a lambda with `include` would be a custom error model with only the
 # desired fields, which could then just use `AfterValidator(YourError.model_dump_json)`
 ErrorModelJson = Annotated[
     ErrorModel,
     AfterValidator(
         lambda m: ErrorModel.model_dump_json(
-            m, include=["error_type", "error_details"], indent=2
-        )
+            m,
+            include=["error_type", "error_details"],
+            indent=2,
+        ),
     ),
 ]
 StrReturn = Annotated[int, AfterValidator(str)]
+
 
 # The decorator here implicitly changes the return type to `StrReturn | ErrorModelJson`
 # i.e. always a `str` (since both types' Annotated AfterValidator produce string values)

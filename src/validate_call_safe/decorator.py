@@ -141,7 +141,7 @@ def validate_call_safe(
                             error_str=str(e),
                             error_repr=repr(e),
                             error_tb=format_exc(),
-                        )
+                        ),
                     )
             except extra_exceptions as e:
                 if _signature_only:
@@ -154,7 +154,7 @@ def validate_call_safe(
                             error_str=str(e),
                             error_repr=repr(e),
                             error_tb=format_exc(),
-                        )
+                        ),
                     )
             return ret
 
