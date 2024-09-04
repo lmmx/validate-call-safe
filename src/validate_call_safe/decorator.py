@@ -156,8 +156,7 @@ def validate_call_safe(
                             error_tb=format_exc(),
                         )
                     )
-            finally:
-                return ret
+            return ret
 
         return wrapper
 
