@@ -123,6 +123,11 @@ Note that when using Unions, you may wish to add in the default `ErrorModel` if 
 otherwise total over all the kinds of models you are allowing to raise, else it may slip through the
 union and raise as a `ValidationError` when the `TypeAdapter` fails to validate the union.
 
+See [`examples/error_unions`][eu] for sample code.
+
+[eu]: https://github.com/lmmx/validate-call-safe/tree/master/examples/error_unions
+
+
 ### Return Value Validation
 
 You can enable return value validation using the `validate_return` parameter,
