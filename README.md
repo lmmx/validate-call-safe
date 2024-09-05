@@ -82,6 +82,13 @@ specifically an instance of [`ErrorModel`][EM]. Its fields are:
        return a
    ```
 
+5. With reporting parameters:
+   ```python
+   @validate_call_safe(report=True, reporter=logger.info)
+   def int_noop(a: int) -> int:
+       return a
+   ```
+
 ### Custom Error Models
 
 To get more concise error model objects, you might want to override the default `ErrorModel` class
@@ -112,10 +119,10 @@ which is passed along to the original Pydantic `@validate_call` decorator flag o
 
 ```python
 @validate_call_safe(validate_return=True)
-def int_noop(a: int) -> int:
+def botched_return(a: int) -> int:
     return "foo"  # This will cause a validation error
 
-result = int_noop(a=1)  # ErrorModel(error_type='ValidationError', ...)
+result = botched_return(a=1)  # ErrorModel(error_type='ValidationError', ...)
 ```
 
 ### Function Body Validation
@@ -128,6 +135,19 @@ def failing_function(name: str):
     raise ValueError(f"Invalid name: {name}")
 
 result = failing_function("John")  # ErrorModel(error_type='ValueError', ...)
+```
+
+### Validation reporting
+
+Input kw/args and (when used with `validate_return=True`) return value can be 'reported'
+by passing `report=True` and optionally a custom `reporter` (default: `print`)
+
+```python
+@validate_call_safe(report=True)
+def int_noop(a: int) -> int:
+    return a
+
+result = int_noop(1)  # prints "int_noop_in_out_validated -> int: 1"
 ```
 
 ### Capturing Additional Exceptions

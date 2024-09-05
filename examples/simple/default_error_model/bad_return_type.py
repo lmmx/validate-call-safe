@@ -37,7 +37,7 @@ a
 """,
         "error_tb": """\
 Traceback (most recent call last):
-  File "/home/louis/lab/validate-call-safe/src/validate_call_safe/decorator.py", line 139, in wrapper
+  File "/home/louis/lab/validate-call-safe/src/validate_call_safe/decorator.py", line 140, in wrapper
     ret = validated_func(*args, **kwargs)
   File "/home/louis/miniconda3/envs/validate-call-safe/lib/python3.10/site-packages/pydantic/validate_call_decorator.py", line 60, in wrapper_function
     return validate_call_wrapper(*args, **kwargs)
@@ -79,7 +79,7 @@ assert bad_return.model_dump() == snapshot(
 """,
         "error_tb": """\
 Traceback (most recent call last):
-  File "/home/louis/lab/validate-call-safe/src/validate_call_safe/decorator.py", line 139, in wrapper
+  File "/home/louis/lab/validate-call-safe/src/validate_call_safe/decorator.py", line 140, in wrapper
     ret = validated_func(*args, **kwargs)
   File "/home/louis/miniconda3/envs/validate-call-safe/lib/python3.10/site-packages/pydantic/validate_call_decorator.py", line 60, in wrapper_function
     return validate_call_wrapper(*args, **kwargs)

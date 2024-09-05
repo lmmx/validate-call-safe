@@ -136,6 +136,7 @@ def validate_call_safe(
             try:
                 if report:
                     msg = f"{func_name} received *{args}, **{kwargs}"
+                    reporter(msg)
                 ret = validated_func(*args, **kwargs)
             except ValidationError as e:
                 # Good enough heuristic to tell if the error came from the func schema
