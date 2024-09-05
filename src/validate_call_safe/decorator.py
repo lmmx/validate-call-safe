@@ -25,6 +25,8 @@ def validate_call_safe(
     validate_return: bool = False,
     validate_body: bool = False,
     extra_exceptions: type[X] | tuple[type[X]] = Exception,
+    report_validations: bool = False,
+    reporter=print,
 ) -> Callable[[Callable[..., R]], Callable[..., R | T]]: ...
 
 
@@ -44,6 +46,8 @@ def validate_call_safe(
     validate_return: bool = False,
     validate_body: bool = False,
     extra_exceptions: type[X] | tuple[type[X]] = Exception,
+    report_validations: bool = False,
+    reporter: Callable = print,
 ):
     """Decorator for validating function calls and handling errors safely.
 
@@ -60,6 +64,8 @@ def validate_call_safe(
         validate_body: Whether to handle exceptions besides signature validation.
         extra_exceptions: Additional exception types to handle in the function body execution
                           (requires `validate_body = True`).
+        report_validations: Whether to report in/outputs via `reporter`.
+        reporter: The function used to report in/outputs if `report_validations = True`.
 
     Returns:
         The decorated function that returns either the original return type or the error model.
