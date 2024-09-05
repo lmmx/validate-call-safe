@@ -1,12 +1,12 @@
 from typing import Literal
 from pydantic import BaseModel
-from validate_call_safe import validate_call_safe, ErrorModel
-from inline_snapshot import snapshot
+from validate_call_safe import validate_call_safe
 
 
 class A(BaseModel):
     x: int
     y: int
+
 
 class B(BaseModel):
     x: str
@@ -19,8 +19,10 @@ class C(BaseModel):
 class ValidnFail(BaseModel):
     error_type: Literal["ValidationError"]
 
+
 class AttribFail(BaseModel):
     error_type: Literal["AttributeError"]
+
 
 @validate_call_safe(ValidnFail | AttribFail, validate_body=True)
 def x_access(model: A | B | C) -> int:

@@ -3,7 +3,16 @@ from __future__ import annotations
 from functools import wraps
 from traceback import format_exc
 import types
-from typing import Annotated, Any, TypeVar, overload, get_origin, get_args, Type, Union, _GenericAlias
+from typing import (
+    Annotated,
+    Any,
+    TypeVar,
+    overload,
+    get_origin,
+    get_args,
+    Union,
+    _GenericAlias,
+)
 from collections.abc import Callable
 
 from pydantic import BaseModel, ConfigDict, TypeAdapter, ValidationError, validate_call
@@ -13,9 +22,10 @@ from .errors import ErrorModel
 T = TypeVar("T", bound=BaseModel)
 R = TypeVar("R")
 X = TypeVar("X", bound=BaseException)
-GenericType = Union[Type, _GenericAlias]
+GenericType = Union[type, _GenericAlias]
 
 __all__ = ("validate_call_safe",)
+
 
 def is_union(cls: GenericType) -> bool:
     """Check if a class is a Union."""
@@ -23,6 +33,7 @@ def is_union(cls: GenericType) -> bool:
     if not hasattr(types, "UnionType"):
         return get_origin(cls) is Union
     return get_origin(cls) in [Union, types.UnionType]
+
 
 # Decorator with brackets
 @overload
@@ -44,7 +55,6 @@ def validate_call_safe(
     func: Callable[..., R],
     /,
 ) -> Callable[..., R | T]: ...
-
 
 
 def validate_call_safe(
@@ -110,7 +120,7 @@ def validate_call_safe(
             if all_models:
                 return True
             else:
-                raise TypeError(f"Union argument to decorator must only contain models")
+                raise TypeError("Union argument to decorator must only contain models")
         return False
 
     empty_brackets = error_model_or_func is ErrorModel
