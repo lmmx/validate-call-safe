@@ -46,6 +46,7 @@ def validate_call_safe(
 ) -> Callable[..., R | T]: ...
 
 
+
 def validate_call_safe(
     error_model_or_func: type[T] | Callable[..., R] = ErrorModel,
     /,

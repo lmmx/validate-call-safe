@@ -41,3 +41,11 @@ def test_reporter_custom_error():
 
 def test_reporter_bad_return():
     importorskip("examples.reporting.bad_return")
+
+
+def test_error_model_union_simple():
+    importorskip("examples.error_unions.union")
+
+
+def test_error_model_union_fallback():
+    importorskip("examples.error_unions.error_model_fallback")
