@@ -1,4 +1,5 @@
 from pytest import importorskip
+from inline_snapshot import snapshot
 
 
 def test_unbracketted():
@@ -15,6 +16,19 @@ def test_bad_return_type():
 
 def test_custom_error_model():
     importorskip("examples.simple.custom_error_model")
+
+
+def test_reporter_simple_print(capsys):
+    importorskip("examples.reporting.simple_print")
+    stdout, stderr = capsys.readouterr()
+    assert stdout == snapshot(
+        """\
+foo received *(1,), **{}
+bar received *(1,), **{}
+bar -> int: 1
+"""
+    )
+    assert stderr == snapshot("")
 
 
 def test_reporter_happy():
