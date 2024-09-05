@@ -17,6 +17,8 @@ existing return type with the provided error model type.
 - Optional model config and return value validation, as in the original Pydantic `@validate_call` decorator
 - Option to validate function body execution (`validate_body`)
 - Option to specify additional exceptions to capture when validating body execution (`extra_exceptions`)
+- Option to report input, outputs and errors, without writing boilerplate
+- Minimal latency (approximately 15% for functions which do **nothing** other than input and output models)
 
 ## Installation
 
