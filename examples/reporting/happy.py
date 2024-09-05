@@ -18,9 +18,14 @@ def int_noop_in_out_validated(a: int) -> int:
 ok_return = int_noop_in_validated(a=1)  # 1
 
 assert ok_return == 1
-assert in_reports == snapshot([])
+assert in_reports == snapshot(["int_noop_in_validated received *(), **{'a': 1}"])
 
 ok_return = int_noop_in_out_validated(a=1)  # 1
 
 assert ok_return == 1
-assert in_out_reports == snapshot(["int_noop_in_out_validated -> int: 1"])
+assert in_out_reports == snapshot(
+    [
+        "int_noop_in_out_validated received *(), **{'a': 1}",
+        "int_noop_in_out_validated -> int: 1",
+    ],
+)
