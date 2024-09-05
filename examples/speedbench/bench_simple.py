@@ -1,5 +1,6 @@
 import timeit
-from pydantic import BaseModel, validate_call, ValidationError
+
+from pydantic import BaseModel, ValidationError, validate_call
 from validate_call_safe import validate_call_safe
 
 
