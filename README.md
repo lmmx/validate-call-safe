@@ -68,7 +68,7 @@ specifically an instance of [`ErrorModel`][EM]. Its fields are:
        return a
    ```
 
-3. Custom error model:
+3. Custom error model (or a `Union` of them):
    ```python
    @validate_call_safe(CustomErrorModel)
    def int_noop(a: int) -> int:
@@ -111,6 +111,17 @@ def int_noop(a: int) -> int:
 success = int_noop(a=1)  # 1
 failure = int_noop(a="A")  # MyErrorModel(error_type='ValidationError', ...)
 ```
+
+#### Unions of Error Models
+
+You can also use a `Union` of error models, e.g. to use a `Literal` for the `error_type` to capture
+specific kinds of error (or more interestingly, to select particular `ValidationError` instances
+based on the details). All unions of error models are first parsed as regular `ErrorModel` and then
+re-parsed into the union via a TypeAdapter.
+
+Note that when using Unions, you may wish to add in the default `ErrorModel` if your union is not
+otherwise total over all the kinds of models you are allowing to raise, else it may slip through the
+union and raise as a `ValidationError` when the `TypeAdapter` fails to validate the union.
 
 ### Return Value Validation
 
