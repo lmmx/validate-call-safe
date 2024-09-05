@@ -25,8 +25,8 @@ def validate_call_safe(
     validate_return: bool = False,
     validate_body: bool = False,
     extra_exceptions: type[X] | tuple[type[X]] = Exception,
-    report_validations: bool = False,
-    reporter=print,
+    report: bool = False,
+    reporter: Callable[[str], None] = print,
 ) -> Callable[[Callable[..., R]], Callable[..., R | T]]: ...
 
 
@@ -46,7 +46,7 @@ def validate_call_safe(
     validate_return: bool = False,
     validate_body: bool = False,
     extra_exceptions: type[X] | tuple[type[X]] = Exception,
-    report_validations: bool = False,
+    report: bool = False,
     reporter: Callable = print,
 ):
     """Decorator for validating function calls and handling errors safely.
@@ -64,8 +64,8 @@ def validate_call_safe(
         validate_body: Whether to handle exceptions besides signature validation.
         extra_exceptions: Additional exception types to handle in the function body execution
                           (requires `validate_body = True`).
-        report_validations: Whether to report in/outputs via `reporter`.
-        reporter: The function used to report in/outputs if `report_validations = True`.
+        report: Whether to report in/outputs via `reporter`.
+        reporter: The function used to report in/outputs if `report = True`.
 
     Returns:
         The decorated function that returns either the original return type or the error model.
@@ -132,7 +132,10 @@ def validate_call_safe(
         @wraps(f)
         def wrapper(*args: Any, **kwargs: Any) -> R | T:
             _signature_only = not validate_body  # Alias for internal clarity
+            func_name = f.__name__
             try:
+                if report:
+                    msg = f"{func_name} received *{args}, **{kwargs}"
                 ret = validated_func(*args, **kwargs)
             except ValidationError as e:
                 # Good enough heuristic to tell if the error came from the func schema
@@ -140,28 +143,40 @@ def validate_call_safe(
                 if _signature_only and not is_signature_ve:
                     raise
                 else:
+                    error_t_name = "ValidationError"
                     ret = error_model_validate(
                         dict(
-                            error_type="ValidationError",
+                            error_type=error_t_name,
                             error_details=e.errors(),
                             error_str=str(e),
                             error_repr=repr(e),
                             error_tb=format_exc(),
                         ),
                     )
+                    if report and validate_return:
+                        reporter(f"{func_name} -> {ret!r}")
             except extra_exceptions as e:
                 if _signature_only:
                     raise
                 else:
+                    error_t_name = type(e).__name__
                     ret = error_model_validate(
                         dict(
-                            error_type=type(e).__name__,
+                            error_type=error_t_name,
                             error_details=[],
                             error_str=str(e),
                             error_repr=repr(e),
                             error_tb=format_exc(),
                         ),
                     )
+                    if report and validate_return:
+                        reporter(f"{func_name} -> {ret!r}")
+            else:
+                if report and validate_return:
+                    f_name = f.__name__
+                    ret_t_name = type(ret).__name__
+                    msg = f"{f_name} -> {ret_t_name}: {ret!r}"
+                    reporter(msg)
             return ret
 
         return wrapper

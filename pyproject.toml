@@ -30,5 +30,6 @@ distribution = true
 
 [tool.pdm.dev-dependencies]
 test = [
-  "pytest>=8.3.2"
+  "pytest>=8.3.2",
+  "inline-snapshot>=0.12.1"
 ]
