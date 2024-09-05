@@ -6,7 +6,7 @@ build-backend = "pdm.backend"
 
 [project]
 name = "validate-call-safe"
-version = "0.3.4"
+version = "0.3.5"
 description = "Safe, non-error-raising, alternative to Pydantic validate_call decorator"
 authors = [
     { name = "Louis Maddox", email = "louismmx@gmail.com" },
