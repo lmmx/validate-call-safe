@@ -26,7 +26,7 @@ def test_reporter_simple_print(capsys):
 foo received *(1,), **{}
 bar received *(1,), **{}
 bar -> int: 1
-"""
+""",
     )
     assert stderr == snapshot("")
 
