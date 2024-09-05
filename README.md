@@ -114,19 +114,33 @@ failure = int_noop(a="A")  # MyErrorModel(error_type='ValidationError', ...)
 
 #### Unions of Error Models
 
-You can also use a `Union` of error models, e.g. to use a `Literal` for the `error_type` to capture
-specific kinds of error (or more interestingly, to select particular `ValidationError` instances
-based on the details). All unions of error models are first parsed as regular `ErrorModel` and then
-re-parsed into the union via a TypeAdapter.
+As well as a single custom decorator `error_model`, you can specify multiple in a Union type.
+These cannot be directly parsed into, so first the error is parsed into a regular `ErrorModel`
+then dumped into a `TypeAdapter` parameterised by the Union type provided as the custom error model.
 
-Note that when using Unions, you may wish to add in the default `ErrorModel` if your union is not
-otherwise total over all the kinds of models you are allowing to raise, else it may slip through the
-union and raise as a `ValidationError` when the `TypeAdapter` fails to validate the union.
+For example, you could select particular `ValidationError` kinds based on `error_details`,
+or more simply just distinguish a model of an `AttributeError` vs. `ValidationError` like this:
+
+```py
+class NoSuchAttribute(BaseModel):
+    error_type: Literal["AttributeError"]
+
+
+class Invalid(BaseModel):
+    error_type: Literal["ValidationError"]
+```
+
+**Caution**: if your union is not total [comprehensive over the types of error that you are allowing to raise
+through setting `extra_exceptions`], say if you set `validate_body` on a function that asserts, but
+then specify the error models above that only capture `error_type` of ValidationError and AttributeError,
+then the `AssertionError` will slip through the union TypeAdapter and raise!
+
+For safeguarding, include the default `ErrorModel` in a custom union, as this will always be
+trivially validated from the initial `ErrorModel` instance.
 
 See [`examples/error_unions`][eu] for sample code.
 
 [eu]: https://github.com/lmmx/validate-call-safe/tree/master/examples/error_unions
-
 
 ### Return Value Validation
 
