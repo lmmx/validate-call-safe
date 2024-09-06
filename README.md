@@ -246,7 +246,3 @@ match result:
 - In the safe form, you get structured error objects to work with (including tracebacks)
 - You can trivially extend the safety level to more exception types with `validate_body`
 - The side effects of the safe form may be easier to reason about for you (I think they are)
-
-## Extensions/ideas
-
-- Multiple model types for different error types with tagged union on the `error_type` field name?
