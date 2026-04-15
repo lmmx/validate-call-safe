@@ -2,6 +2,12 @@
 build-backend = "uv_build"
 requires = ["uv_build>=0.11.6,<0.12"]
 
+[dependency-groups]
+test = [
+  "pytest>=8.3.2",
+  "inline-snapshot>=0.32"
+]
+
 [project]
 name = "validate-call-safe"
 version = "0.3.5"
@@ -18,12 +24,6 @@ readme = "README.md"
 
 [project.license]
 text = "MIT"
-
-[dependency-groups]
-test = [
-  "pytest>=8.3.2",
-  "inline-snapshot>=0.32"
-]
 
 [project.urls]
 Homepage = "https://github.com/lmmx/validate-call-safe"
