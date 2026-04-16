@@ -33,6 +33,6 @@ assert isinstance(failure, CustomErrorModel)
 assert reports == snapshot(
     [
         "int_noop received *(), **{'a': 'A'}",
-        "int_noop -> CustomErrorModel(error_type='ValidationError', error_details=[{'type': 'int_parsing', 'loc': ('a',), 'msg': 'Input should be a valid integer, unable to parse string as an integer', 'input': 'A', 'url': 'https://errors.pydantic.dev/2.8/v/int_parsing'}])",
+        "int_noop -> CustomErrorModel(error_type='ValidationError', error_details=[{'type': 'int_parsing', 'loc': ('a',), 'msg': 'Input should be a valid integer, unable to parse string as an integer', 'input': 'A', 'url': 'https://errors.pydantic.dev/2.10/v/int_parsing'}])",
     ],
 )

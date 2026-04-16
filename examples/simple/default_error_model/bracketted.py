@@ -28,26 +28,29 @@ assert failure.model_dump() == snapshot(
 1 validation error for int_noop
 a
   Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='A', input_type=str]
-    For further information visit https://errors.pydantic.dev/2.8/v/int_parsing\
+    For further information visit https://errors.pydantic.dev/2.10/v/int_parsing\
 """,
         "error_repr": """\
 1 validation error for int_noop
 a
   Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='A', input_type=str]
-    For further information visit https://errors.pydantic.dev/2.8/v/int_parsing\
+    For further information visit https://errors.pydantic.dev/2.10/v/int_parsing\
 """,
         "error_tb": """\
 Traceback (most recent call last):
-  File "/home/louis/lab/validate-call-safe/src/validate_call_safe/decorator.py", line 178, in wrapper
+  File "/home/louis/dev/validate-call-safe/src/validate_call_safe/decorator.py", line 178, in wrapper
     ret = validated_func(*args, **kwargs)
-  File "/home/louis/miniconda3/envs/validate-call-safe/lib/python3.10/site-packages/pydantic/validate_call_decorator.py", line 60, in wrapper_function
-    return validate_call_wrapper(*args, **kwargs)
-  File "/home/louis/miniconda3/envs/validate-call-safe/lib/python3.10/site-packages/pydantic/_internal/_validate_call.py", line 96, in __call__
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/louis/dev/validate-call-safe/.venv/lib/python3.11/site-packages/pydantic/_internal/_validate_call.py", line 38, in wrapper_function
+    return wrapper(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/louis/dev/validate-call-safe/.venv/lib/python3.11/site-packages/pydantic/_internal/_validate_call.py", line 111, in __call__
     res = self.__pydantic_validator__.validate_python(pydantic_core.ArgsKwargs(args, kwargs))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 pydantic_core._pydantic_core.ValidationError: 1 validation error for int_noop
 a
   Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='A', input_type=str]
-    For further information visit https://errors.pydantic.dev/2.8/v/int_parsing
+    For further information visit https://errors.pydantic.dev/2.10/v/int_parsing
 """,
     },
 )

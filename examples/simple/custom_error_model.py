@@ -28,7 +28,7 @@ assert failure.model_dump() == snapshot(
                 "loc": ("a",),
                 "msg": "Input should be a valid integer, unable to parse string as an integer",
                 "input": "A",
-                "url": "https://errors.pydantic.dev/2.8/v/int_parsing",
+                "url": "https://errors.pydantic.dev/2.10/v/int_parsing",
             },
         ],
     },
