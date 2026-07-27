@@ -1,5 +1,6 @@
-from pydantic import BaseModel
 from inline_snapshot import snapshot
+from pydantic import BaseModel
+
 from validate_call_safe import validate_call_safe
 
 reports = []

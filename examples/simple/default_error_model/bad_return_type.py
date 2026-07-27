@@ -1,5 +1,6 @@
-from validate_call_safe import validate_call_safe, ErrorModel
 from inline_snapshot import snapshot
+
+from validate_call_safe import ErrorModel, validate_call_safe
 
 
 @validate_call_safe(validate_return=True)

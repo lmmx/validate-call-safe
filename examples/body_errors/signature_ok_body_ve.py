@@ -1,4 +1,5 @@
 from pydantic import BaseModel, ValidationError
+
 from validate_call_safe import validate_call_safe
 
 
