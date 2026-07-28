@@ -1,19 +1,19 @@
 from __future__ import annotations
 
+import types
+from collections.abc import Callable
 from functools import wraps
 from traceback import format_exc
-import types
 from typing import (
     Annotated,
     Any,
     TypeVar,
-    overload,
-    get_origin,
-    get_args,
     Union,
     _GenericAlias,
+    get_args,
+    get_origin,
+    overload,
 )
-from collections.abc import Callable
 
 from pydantic import BaseModel, ConfigDict, TypeAdapter, ValidationError, validate_call
 

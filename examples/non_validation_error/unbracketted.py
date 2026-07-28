@@ -1,4 +1,4 @@
-from validate_call_safe import validate_call_safe, ErrorModel
+from validate_call_safe import ErrorModel, validate_call_safe
 
 
 @validate_call_safe(validate_body=True, extra_exceptions=Exception)

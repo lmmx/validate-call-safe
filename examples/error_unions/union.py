@@ -1,5 +1,7 @@
 from typing import Literal
+
 from pydantic import BaseModel
+
 from validate_call_safe import validate_call_safe
 
 

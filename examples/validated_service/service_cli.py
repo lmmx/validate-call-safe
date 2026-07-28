@@ -5,7 +5,8 @@ from ast import literal_eval
 from typing import Annotated, Literal
 
 from pydantic import AfterValidator, BaseModel
-from validate_call_safe import validate_call_safe, ErrorModel
+
+from validate_call_safe import ErrorModel, validate_call_safe
 
 
 class Pet(BaseModel):
