@@ -35,8 +35,10 @@ The simplest possible usage is as a direct alternative to `@validate_call`:
 ```py
 from validate_call_safe import validate_call_safe
 
+
 def foo(a: int) -> None:
     return a
+
 
 value = foo(a="bar")  # ErrorModel(error_type='ValidationError', ...)
 ```
@@ -102,13 +104,16 @@ For example:
 from pydantic import BaseModel
 from validate_call_safe import validate_call_safe, ErrorDetails
 
+
 class MyErrorModel(BaseModel):
     error_type: str
     error_details: list[ErrorDetails]
 
+
 @validate_call_safe(MyErrorModel)
 def int_noop(a: int) -> int:
     return a
+
 
 success = int_noop(a=1)  # 1
 failure = int_noop(a="A")  # MyErrorModel(error_type='ValidationError', ...)
@@ -154,6 +159,7 @@ which is passed along to the original Pydantic `@validate_call` decorator flag o
 def botched_return(a: int) -> int:
     return "foo"  # This will cause a validation error
 
+
 result = botched_return(a=1)  # ErrorModel(error_type='ValidationError', ...)
 ```
 
@@ -165,6 +171,7 @@ To capture exceptions that occur within the function body, use the `validate_bod
 @validate_call_safe(validate_body=True)
 def failing_function(name: str):
     raise ValueError(f"Invalid name: {name}")
+
 
 result = failing_function("John")  # ErrorModel(error_type='ValueError', ...)
 ```
@@ -178,6 +185,7 @@ by passing `report=True` and optionally a custom `reporter` (default: `print`)
 @validate_call_safe(report=True)
 def int_noop(a: int) -> int:
     return a
+
 
 result = int_noop(1)  # prints "int_noop_in_out_validated -> int: 1"
 ```
@@ -194,6 +202,7 @@ def risky_function(a: int):
     elif a == 2:
         raise TypeError("Type mismatch")
     return a
+
 
 result1 = risky_function(1)  # ErrorModel(error_type='NameError', ...)
 result2 = risky_function(2)  # ErrorModel(error_type='TypeError', ...)
@@ -213,9 +222,11 @@ With `validate_call_safe` you don't have to catch the expected `ValidationError`
 ```python
 from pydantic import validate_call
 
+
 @validate_call
 def unsafe_int_noop(a: int) -> int:
     return a
+
 
 try:
     unsafe_int_noop(a="A")
